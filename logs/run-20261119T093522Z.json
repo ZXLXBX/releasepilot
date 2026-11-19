@@ -1,0 +1,7 @@
+{
+  "provider": "ollama",
+  "model": "llama3.2:1b",
+  "started": "20261119T093522Z",
+  "turns": [],
+  "error": "TIMEOUT: The configured model provider timed out before it could return a decision (ollama request timed out: timed out). Please retry."
+}

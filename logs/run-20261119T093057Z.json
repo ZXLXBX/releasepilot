@@ -1,0 +1,7 @@
+{
+  "provider": "ollama",
+  "model": "(default)",
+  "started": "20261119T093057Z",
+  "turns": [],
+  "error": "PROVIDER_ERROR: The configured model provider failed before it could return a decision (InvalidURL: Invalid port: ':1]'). Please retry or switch models."
+}
