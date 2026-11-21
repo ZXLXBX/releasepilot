@@ -143,9 +143,16 @@ def main() -> int:
             )
             print("[turn 1]", turn1.text)
 
+            # v2: task-frame the recall and route it through the read-back
+            # tool. In v1 this turn was a bare question and the runtime's
+            # freshness guardrail refused it as a "regulation answer"; the
+            # database is local session state, and get_triage_summary is
+            # the grounded way to answer from it.
             turn2 = agent.run(
-                "From your triage in this session: which issue ids are release "
-                "blockers, and what version are the release notes for? Answer briefly.",
+                "Use the get_triage_summary tool to look up the triage "
+                "decisions recorded in the database, then answer briefly from "
+                "its result: which issue ids are release blockers? Also state "
+                "what version the release notes you wrote are for.",
                 timeout_seconds=300,
                 approval_callback=approval_callback,
             )

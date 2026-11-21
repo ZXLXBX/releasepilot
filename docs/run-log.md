@@ -1,4 +1,4 @@
-# Run log — every run we actually made, in order (2026-11-19)
+# Run log — every run we actually made, in order (2026-11-19 v1, 2026-11-21 v2)
 
 Nothing here is fabricated: each entry names its transcript file in `logs/`.
 Local runs were on this project's dev VM (1.5 shared vCPU, 6 GB RAM);
@@ -69,6 +69,68 @@ standing route for heavy compute), same code, same SDK version (0.1.23).
   current regulation answer because Missing live-data evidence for a
   freshness-sensitive answer…"*. A recall question about local session
   state is not freshness-sensitive. → Issue draft #2.
+
+## Run 5 — v2 first run, Ollama llama3.1:8b, Colab T4 (2026-11-21)
+- Files: `logs/colab-verified-v2/run-20261121T015738Z.json`,
+  `logs/colab-verified-v2/doctor-20261121T015738Z.json`,
+  `logs/colab-verified-v2/session-run.log`,
+  `logs/colab-verified-v2/RELEASE_NOTES-run1.md`,
+  triage rows in `logs/colab-verified-v2/triage-db-dump.txt`
+- v2 fixes under test: deterministic blocker guardrail, enum-constrained
+  triage schema, `get_triage_summary` read-back tool for follow-ups.
+- Turn 1: 182 s, 16 LLM calls, `tool_calls_count: 9`, 50,690 tokens,
+  7 approval decisions, 1 tool error (the model's first
+  `write_release_notes` call passed no `content` argument and was blocked
+  by the SDK's pydantic argument validation; the retry succeeded).
+- **The guardrail fired on the exact v1 defect**: the model passed
+  `blocker=false` for ISSUE-104 again, and the tool overrode it —
+  `[guardrail] GUARDRAIL OVERRIDE: ISSUE-104 matches blocker rule(s)
+  [data-loss] — blocker forced to true`. Final DB: 101 bug/high/blocker ·
+  102 feature/medium · 103 docs/low · 104 other/low/**blocker**
+  (guardrail: data-loss) · 105 other/medium. No out-of-vocabulary
+  category was recorded (`enhancement` is gone), but the model twice
+  picked the in-enum-but-wrong label `other` (ISSUE-104, ISSUE-105).
+- `write_release_notes` appended the deterministic "Guardrail overrides"
+  section in code, as designed. The model's own notes draft, however, was
+  a bare triage list, not the grouped notes v1 produced.
+- Turn 2: no freshness-guardrail refusal; the agent called tools
+  (2 tool calls) including `get_triage_summary`, which returned the
+  correct DB state ("Release blockers (2): ISSUE-101, ISSUE-104"). The
+  final composed answer, though, only surfaced the version half of the
+  question (and named the current version, 1.4.0).
+
+## Run 6 — v2 second run, Ollama llama3.1:8b, Colab T4 — ✅ V2 VERIFIED RUN (2026-11-21)
+- Files: `logs/colab-verified-v2/run-20261121T020321Z.json`,
+  `logs/colab-verified-v2/doctor-20261121T020321Z.json`,
+  `logs/colab-verified-v2/session-run2.log`,
+  `logs/colab-verified-v2/RELEASE_NOTES-run2.md` (also in `output/`),
+  triage rows in `logs/colab-verified-v2/triage-db-dump.txt`
+- Fresh state (DB and output deleted before the run; same code as run 5).
+- Turn 1: **75 s, 17 LLM calls, `tool_calls_count: 9`, 54,658 tokens**,
+  7 approval decisions, 1 tool error (same empty-argument first
+  `write_release_notes` call, blocked by argument validation, retried).
+  Profile is directly comparable to v1's verified run (84 s / 17 / 9 /
+  52,681).
+- **Guardrail fired again**: model passed `blocker=false` for ISSUE-104;
+  override forced blocker=true (rule: data-loss), printed to the run log,
+  persisted in the row, and appended to the release notes in code.
+  Final DB: 101 bug/high/blocker · 102 feature/medium · 103 docs/low/
+  **blocker** · 104 other/medium/**blocker** (guardrail: data-loss) ·
+  105 other/low.
+- Two honest blemishes: the model set blocker=true for the docs issue
+  ISSUE-103 on its own (the guardrail only forces blocker *on* for
+  crash/data-loss/security text; it deliberately does not veto other
+  model judgments), and it again labelled ISSUE-104/105 `other` instead
+  of bug/feature — inside the enum, semantically wrong. Its notes draft
+  was again a one-line placeholder rather than grouped notes; the file
+  on disk is that draft plus the code-appended guardrail section.
+- Turn 2: 25 s, 5 LLM calls, **1 tool call — `get_triage_summary`** —
+  and the answer came straight from the database: *"The release blockers
+  are ISSUE-101, ISSUE-103, and ISSUE-104."* (faithful to the DB,
+  including the model's own ISSUE-103 call). No freshness refusal.
+- Unit tests on the same Colab runtime (Python 3.13, SDK 0.1.23):
+  **19/19 pass** (6 v1 tests + 13 new: guardrail rules/overrides,
+  enum rejection, read-back summary).
 
 ## Probe — SDK tool_agent pattern in isolation (llama3.1:8b, Colab)
 - In `logs/colab-verified/run6.log`: a minimal `Agent(tools=[lookup_order],

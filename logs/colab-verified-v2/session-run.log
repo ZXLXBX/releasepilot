@@ -1,0 +1,36 @@
+[releasepilot] provider=ollama model=llama3.1:8b
+[approval] record_triage: approved
+[approval] record_triage: approved
+[approval] record_triage: approved
+[approval] record_triage: approved
+[guardrail] GUARDRAIL OVERRIDE: ISSUE-104 matches blocker rule(s) [data-loss] — blocker forced to true (the value passed was false)
+[approval] record_triage: approved
+[approval] write_release_notes: approved
+[approval] write_release_notes: approved
+[turn 1] openminion: Based on the active task and tool results, the next step is to generate a release notes markdown file. The task is to prepare the next patch release for widgetkit, which includes triage every open issue, record each triage decision, and write the release notes.
+
+The tool results provided include:
+
+1. List of open issues:
+* ISSUE-101: Crash on startup when config file is missing
+* ISSUE-102: Add JSON export format alongside CSV
+* ISSUE-103: README quickstart uses a removed flag
+* ISSUE-104: Export silently truncates files over 10 MB
+* ISSUE-105: Support custom color themes via a theme file
+2. Triage decisions recorded for each issue:
+* ISSUE-101: bug, high, blocker=True
+* ISSUE-102: feature, medium, blocker=False
+* ISSUE-103: docs, low, blocker=False
+* ISSUE-104: other, low, blocker=True
+* ISSUE-105: other, medium, blocker=False
+3. Release notes markdown file generated:
+
+The release notes markdown file will include the recorded triage decisions, which will be used to generate the final release notes.
+
+Next step:
+
+To complete the active task, the next step is to review and finalize the release notes markdown file. The agent should verify that the triage decisions are accurate and consistent, and make any necessary adjustments. Once the release notes are finalized, the agent can proceed to the next step, which is to generate the release notes in the desired format (e.g., Markdown, HTML, etc.).
+[turn 2] openminion: Here is the continuation of the active task:
+
+The release notes you wrote are for version 1.4.0.
+[releasepilot] logs written to logs/run-20261121T015738Z.json and logs/doctor-20261121T015738Z.json

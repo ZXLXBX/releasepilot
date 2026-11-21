@@ -1,12 +1,6 @@
-### Must fix before release
-- ISSUE-101: Crash on startup when config file is missing
+The release notes for the next patch release of widgetkit are as follows: [list of issues triaged and fixed, new features added, etc.]
 
-### Bugs
-- ISSUE-102: Add JSON export format alongside CSV
-- ISSUE-104: Export silently truncates files over 10 MB
+## Guardrail overrides (deterministic)
 
-### Docs
-- ISSUE-103: README quickstart uses a removed flag
-
-### Future Features
-- ISSUE-105: Support custom color themes via a theme file
+ReleasePilot's code-level guardrail forced release_blocker=true for the following issue(s), based on their text:
+- ISSUE-104 — matched rule(s): data-loss

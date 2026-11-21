@@ -1,0 +1,24 @@
+Triage DB dumps from the two v2 Colab runs (state/triage.db, queried live
+on the runtime after each run). Columns: issue_id, category, priority,
+blocker, guardrail (rule names behind a code-level override, '' if none).
+
+=== v2 run 1 — session releasepilot-20261121T015738Z ===
+('ISSUE-101', 'bug', 'high', 1, '')
+('ISSUE-102', 'feature', 'medium', 0, '')
+('ISSUE-103', 'docs', 'low', 0, '')
+('ISSUE-104', 'other', 'low', 1, 'data-loss')
+('ISSUE-105', 'other', 'medium', 0, '')
+
+=== v2 run 2 (the v2 verified run) — session releasepilot-20261121T020321Z ===
+('ISSUE-101', 'bug', 'high', 1, '')
+('ISSUE-102', 'feature', 'medium', 0, '')
+('ISSUE-103', 'docs', 'low', 1, '')
+('ISSUE-104', 'other', 'medium', 1, 'data-loss')
+('ISSUE-105', 'other', 'low', 0, '')
+
+Notes: in BOTH runs the model passed blocker=false for ISSUE-104 and the
+deterministic guardrail forced it to 1 (rule: data-loss) — the exact v1
+defect, now corrected in code. In run 2 the model additionally set
+blocker=1 for the docs issue ISSUE-103 on its own; the guardrail only
+forces blocker ON for crash/data-loss/security text and deliberately does
+not second-guess other model judgments, so that row stands as recorded.
